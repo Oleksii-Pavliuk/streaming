@@ -1,2 +1,2 @@
-# streaming
-Video streaming app
+# Streaming backend
+Bakend services for the video streaming app

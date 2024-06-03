@@ -1,0 +1,80 @@
+---
+
+version: "3.9"
+services:
+
+
+  # auth:
+  #   image: cplk01/auth-service:latest
+  #   container_name: auth
+  #   environment:
+  #     - NODE_ENV=production
+  #   ports:
+  #     - "3001:3001"
+  #   networks:
+  #     - streaming_network
+
+  mongodb:
+    image: mongo:8.0-rc
+    container_name: mongodb
+    environment:
+      - MONGO_INITDB_DATABASE=streaming
+      - MONGO_INITDB_ROOT_USERNAME=user
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - streaming_network
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    networks:
+      - streaming_network
+
+  consul-server:
+    image: hashicorp/consul:1.14.4
+    container_name: consul-server
+    restart: always
+    volumes:
+      - ./consul/server.json:/consul/config/server.json:ro
+    networks:
+      - streaming_network
+    ports:
+      - 8500:8500
+      - 8600:8600/tcp
+      - 8600:8600/udp
+    command: agent
+
+  consul-client:
+    image: hashicorp/consul:1.14.4
+    container_name: consul-client
+    restart: always
+    volumes:
+      - ./consul/client.json:/consul/config/client.json:ro
+    networks:
+      - streaming_network
+    command: agent
+
+
+
+
+
+volumes:
+  rabbit-data:
+  rabbit-log:
+  pg-data:
+  mongo-data:
+
+networks:
+  streaming_network:
+    name: streaming_network
+    driver: bridge

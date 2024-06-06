@@ -1,10 +1,16 @@
 import { User } from "../models/user-model";
 import { uuid }  from 'uuidv4';
+import { createLogger } from '../utils/logger';
 export class UserManager {
-  constructor() {}
+
+  private log: (level: string, message: string, data: any) => void;
+
+  constructor() {
+    let logger = createLogger('UserManager');
+    this.log = logger.log;
+  }
 
   states = {
-
     userRegistered: { message: "User registered", status: 200 },
     userFound: { message: "User found", status: 200 },
     userDeleted: { message: "User deleted", status: 200 },
@@ -27,6 +33,7 @@ export class UserManager {
 
   public async registerUser(userInfo: any) {
 
+    this.log('info', 'registerUser', {userInfo});
     let success = false;
     let state = this.states.failedToRegister;
     const id = uuid();
@@ -34,7 +41,7 @@ export class UserManager {
     try {
       userInfo.id = id;
     }catch(e) {
-      console.log(e);
+      this.log('error', 'registerUser', {userInfo, error: e});
     }
 
     if((await this.checkUser(userInfo.email)).success == true){
@@ -46,13 +53,15 @@ export class UserManager {
       await user.save()
       success = true;
     }catch(e) {
-      console.log(e);
+      this.log('error', 'registerUser', {userInfo, error: e});
     }
 
+    this.log('info', 'registerResult', {userInfo,state});
     return {success, status : {state}, message: {state}, id};
   }
 
   public async checkUser(email: string) {
+    this.log('info', 'checkUser', {email});
     let success = false;
     let state = this.states.userNotFound;
     try {
@@ -62,31 +71,71 @@ export class UserManager {
         state = this.states.userFound;
       }
     }catch(e) {
-      console.log(e);
+      this.log('error', 'checkUser', {email, error: e});
     }
+    this.log('info', 'checkUser', {email,state});
     return {success, status : {state}, message: {state}};
   }
-  public async deleteUser(email: string) {
+
+  public async deleteUser(id: string) {
+    this.log('info', 'deleteUser', {id});
+    let success = false;
+    let state = this.states.failedToDelete
+    try {
+      const user = await User.findOne({id: id}).exec();
+      if(!user){
+        success = false;
+        state = this.states.userNotFound;
+      }else{
+        if(user.id){
+          await User.deleteOne({id: id}).exec();
+          success = true;
+          state = this.states.userDeleted;
+        }
+      }
+    }catch(e) {
+      this.log('error', 'deleteUser', {id, state});
+    }
+    this.log('info', 'deleteUser', {id, state});
+    return {success, status : {state}, message: {state}};
+  }
+
+  public async generateRecoveryLink(id: string) {
+    this.log('info', 'generateRecoveryLink', {id});
+    let success = false;
+    let state = this.states.failedToGenerateRecoveryLink
+    try {
+      const user = await User.findOne({id: id}).exec();
+      if(!user){
+        success = false;
+        state = this.states.userNotFound;
+      }else{
+        // Change to use timestamp to make it more secure
+        user.updateOne({recoveryLink: uuid() + uuid()}).exec();
+        success = true;
+        state = this.states.recoveryLinkSent
+      }
+    }catch(e) {
+      this.log('error', 'generateRecoveryLink', {id, state});
+    }
+    this.log('info', 'generateRecoveryLink', {id, state});
+    return {success, status : {state}, message: {state}};
+  }
+
+  public async checkRecoveryLink(id: string, link: string) {
 
     return true;
   }
-  public async generateRecoveryLink(email: string) {
 
-    return 'recoveryLink';
-  }
-  public async checkRecoveryLink(email: string, link: string) {
-
-    return true;
-  }
   public async updateUserInfo(userInfo: string) {
 
     return true;
   }
+
   public async changePassword(email: string, oldPassword: string, newPassword: string) {
 
     return true;
   }
-
 
 
 }

@@ -12,6 +12,8 @@ interface IConfigSchema {
 	consulPort: number;
 	jaegerHost: string;
 	jaegerPort: number;
+	encKey: string;
+	secKey: string;
 }
 
 const config: convict.Config<IConfigSchema> = convict({
@@ -90,6 +92,18 @@ const config: convict.Config<IConfigSchema> = convict({
 		format: "port",
 		default: 4318,
 		env: "JAEGER_PORT",
+	},
+	encKey: {
+		doc: "The key used for encryption in user-manager",
+		format: String,
+		default: null,
+		env: "ENC_KEY",
+	},
+	secKey: {
+		doc: "The key used for encryption in user-manager",
+		format: String,
+		default: null,
+		env: "SEC_KEY",
 	}
 } as unknown as Schema<IConfigSchema>);
 

@@ -15,6 +15,14 @@ const userSchema = new Schema({
   email: {
     type: String,
     required: true
+  },
+  passwordHash: {
+    type: String,
+    required: true
+  },
+  recoveryCode: {
+    type: String,
+    required: false
   }
 });
 

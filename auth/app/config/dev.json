@@ -5,6 +5,7 @@
   "jaegerHost" : "localhost",
   "mongostring" : "mongodb://localhost:27017/streaming",
   "mongouser" : "user",
-  "mongopassword" : "password"
-
+  "mongopassword" : "password",
+  "secKey": "secretkey",
+  "encKey": "encryption"
 }

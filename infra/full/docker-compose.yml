@@ -45,7 +45,7 @@ services:
     container_name: consul-server
     restart: always
     volumes:
-      - ./consul/server.json:/consul/config/server.json:ro
+      - ../consul/server.json:/consul/config/server.json:ro
     networks:
       - streaming_network
     ports:
@@ -59,7 +59,7 @@ services:
     container_name: consul-client
     restart: always
     volumes:
-      - ./consul/client.json:/consul/config/client.json:ro
+      - ../consul/client.json:/consul/config/client.json:ro
     networks:
       - streaming_network
     command: agent

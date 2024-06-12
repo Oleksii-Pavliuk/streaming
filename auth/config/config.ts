@@ -19,7 +19,7 @@ interface IConfigSchema {
 const config: convict.Config<IConfigSchema> = convict({
 	env: {
 		doc: "Environoment for application",
-		format: ["dev", "prod", "stage"],
+		format: ["dev", "prod", "test"],
 		default: "dev",
 		env: "NODE_ENV",
 	},

@@ -58,9 +58,6 @@ services:
 
 
 volumes:
-  rabbit-data:
-  rabbit-log:
-  pg-data:
   mongo-data:
 
 networks:

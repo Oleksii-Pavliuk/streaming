@@ -4,10 +4,10 @@ import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 import { SemanticResourceAttributes } from "@opentelemetry/semantic-conventions";
 import { Resource} from "@opentelemetry/resources";
 
-import config from "./config/config"
+import config from "./config/config";
 
-const JAEGER_HOST = config.get("jaegerHost")
-const JAEGER_PORT = config.get("jaegerPort")
+const JAEGER_HOST = config.get("jaegerHost");
+const JAEGER_PORT = config.get("jaegerPort");
 const JAEGER_SERVICE_NAME: string = config.get("ServiceName");
 
 const resource : any  = new Resource({
@@ -19,6 +19,5 @@ const sdk = new NodeSDK({
     instrumentations: [getNodeAutoInstrumentations()],
   });
 
-sdk.start()
-console.log("Registred with Open telemetry")
-
+sdk.start();
+console.log("Registred with Open telemetry");

@@ -2,11 +2,11 @@ FROM node:22.2.0-bullseye-slim
 
 WORKDIR /app
 
-COPY package*.json /
+COPY package*.json .
 
 RUN npm install
 
-COPY . /
+COPY . .
 
 # Compile TypeScript to JavaScript
 RUN npm run build

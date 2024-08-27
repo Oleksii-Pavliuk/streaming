@@ -4,6 +4,8 @@ const PORT = config.get("port");
 import app from './app/app';
 import { register as registerConsul } from "./consul/consul-connection";
 import { connectMongo } from "./db/mongo-connection";
+import AuthRouter from "./routes/auth-routes";
+
 
 /* =================
    SERVER START
@@ -13,3 +15,6 @@ app.listen(PORT, () => {
    connectMongo();
    registerConsul();
 });
+
+app.use('/api/auth', AuthRouter);
+

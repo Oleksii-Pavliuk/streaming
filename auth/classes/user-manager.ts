@@ -5,7 +5,7 @@ import config from "../config/config"
 
 const ENC_KEY = config.get("encKey");
 const SEC_KEY = config.get("secKey");
-export class UserManager {
+class UserManager {
 
   secretKey = SEC_KEY;
 
@@ -77,20 +77,20 @@ export class UserManager {
     return {success, status : {state}, message: {state}, id};
   }
 
-  public async checkUser(email: string) {
-    this.log('info', 'checkUser', {email});
+  public async checkUser(key: string, value: string | number) {
+    this.log('info', 'checkUser', {[key]:value});
     let success = false;
     let state = this.states.userNotFound;
     try {
-      const user = await User.findOne({email: email}).exec();
+      const user = await User.findOne({[key]:value}).exec();
       if(user){
         success = true;
         state = this.states.userFound;
       }
     }catch(e) {
-      this.log('error', 'checkUser', {email, error: e});
+      this.log('error', 'checkUser', {[key]:value, error: e});
     }
-    this.log('info', 'checkUser', {email,state});
+    this.log('info', 'checkUser', {[key]:value,state});
     return {success, status : {state}, message: {state}};
   }
 
@@ -269,3 +269,5 @@ export class UserManager {
   }
 
 }
+
+export const userManager = new UserManager();
